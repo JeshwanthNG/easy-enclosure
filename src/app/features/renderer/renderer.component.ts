@@ -33,12 +33,14 @@ import { EnclosureStateService } from '../../core/state/enclosure-state.service'
 const SPACING = 20;
 
 const lidDeps = [
+  'baseShape',
   'length',
   'width',
   'roof',
   'wall',
   'cornerRadius',
   'lidScrews',
+  'lidScrewCount',
   'waterProof',
   'lidScrewDiameter',
   'baseLidScrewDiameter',
@@ -48,6 +50,7 @@ const lidDeps = [
   'holes',
 ];
 const baseDeps = [
+  'baseShape',
   'length',
   'width',
   'height',
@@ -57,6 +60,7 @@ const baseDeps = [
   'holes',
   'wallMounts',
   'lidScrews',
+  'lidScrewCount',
   'baseLidScrewDiameter',
   'waterProof',
   'insertThickness',
@@ -67,6 +71,7 @@ const baseDeps = [
   'insertClearance',
 ];
 const sealDeps = [
+  'baseShape',
   'length',
   'width',
   'wall',
@@ -78,6 +83,7 @@ const sealDeps = [
   'lidScrewDiameter',
   'baseLidScrewDiameter',
   'lidScrews',
+  'lidScrewCount',
 ];
 const mountDeps = [
   'pcbMounts',

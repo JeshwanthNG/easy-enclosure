@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 
-import type { Hole, InternalWall, PCBMount, Params } from '../../core/params';
+import type { BaseShape, Hole, InternalWall, PCBMount, Params } from '../../core/params';
 import { EnclosureStateService } from '../../core/state/enclosure-state.service';
 
 type Surface = 'top' | 'bottom' | 'left' | 'right' | 'front' | 'back';
@@ -17,12 +17,51 @@ export class ParamsFormComponent {
   readonly activeTab = signal<number | null>(null);
 
   readonly surfaces: Surface[] = ['front', 'right', 'back', 'left', 'top', 'bottom'];
+  readonly baseShapes: BaseShape[] = ['rectangle', 'circle', 'oval'];
 
   surfaceLabel(surface: Surface): string {
     if (surface === 'top') {
       return 'Lid';
     }
     return surface[0].toUpperCase() + surface.slice(1);
+  }
+
+  baseShapeLabel(shape: BaseShape): string {
+    return shape[0].toUpperCase() + shape.slice(1);
+  }
+
+  isCurvedBase(): boolean {
+    return this.params().baseShape !== 'rectangle';
+  }
+
+  setBaseShape(value: string): void {
+    const shape = value as BaseShape;
+    const current = this.params();
+    const patch: Partial<Params> = { baseShape: shape };
+    if (shape === 'circle') {
+      patch.width = current.width;
+      patch.length = current.width;
+    }
+    if (shape !== 'rectangle') {
+      patch.holes = current.holes.map((hole) => {
+        if (hole.surface === 'top' || hole.surface === 'bottom') {
+          return { ...hole, mode: 'face' as const };
+        }
+        return { ...hole, mode: 'angular' as const };
+      });
+    } else {
+      patch.holes = current.holes.map((hole) => ({ ...hole, mode: 'face' as const }));
+    }
+    this.state.patchParams(patch);
+  }
+
+  setHoleSurface(index: number, surface: Surface): void {
+    const baseShape = this.params().baseShape;
+    const mode: 'face' | 'angular' =
+      baseShape !== 'rectangle' && surface !== 'top' && surface !== 'bottom'
+        ? 'angular'
+        : 'face';
+    this.updateHole(index, { surface, mode });
   }
 
   params(): Params {
@@ -54,6 +93,7 @@ export class ParamsFormComponent {
 
   addHole(): void {
     const current = this.params();
+    const useAngular = current.baseShape !== 'rectangle';
     const next: Hole = {
       shape: 'circle',
       surface: 'front',
@@ -63,6 +103,9 @@ export class ParamsFormComponent {
       cornerRadius: 3,
       y: current.width / 2,
       x: 6,
+      mode: useAngular ? 'angular' : 'face',
+      angle: 0,
+      verticalOffset: 0,
     };
     this.state.patchParams({ holes: [...current.holes, next] });
   }

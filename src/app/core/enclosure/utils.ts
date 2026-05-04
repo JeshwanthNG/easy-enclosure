@@ -1,7 +1,8 @@
 import { subtract } from '@jscad/modeling/src/operations/booleans';
 import { hull } from '@jscad/modeling/src/operations/hulls';
 import { rotateZ, translate } from '@jscad/modeling/src/operations/transforms';
-import { cuboid, cylinder } from '@jscad/modeling/src/primitives';
+import { cuboid, cylinder, ellipse } from '@jscad/modeling/src/primitives';
+import { extrudeLinear } from '@jscad/modeling/src/operations/extrusions';
 import { degToRad } from '@jscad/modeling/src/utils';
 
 export const roundedCube = (l: number, w: number, h: number, r = 8, s = 100) => {
@@ -65,5 +66,22 @@ export const clover = (l: number, w: number, h: number, r = 8, s = 100) => {
 export const cloverFrame = (l: number, w: number, h: number, t: number, r = 8, s = 100) => {
   const outer = clover(l, w, h, r, s);
   const inner = clover(l - t * 2, w - t * 2, h, r, s);
+  return subtract(outer, translate([t, t, 0], inner));
+};
+
+export const ellipseBody = (l: number, w: number, h: number, s = 128) => {
+  const profile = ellipse({ radius: [l / 2, w / 2], segments: s });
+  return translate([l / 2, w / 2, 0], extrudeLinear({ height: h }, profile));
+};
+
+export const hollowEllipse = (l: number, w: number, h: number, t: number, s = 128) => {
+  const outer = ellipseBody(l, w, h, s);
+  const inner = ellipseBody(l - t * 2, w - t * 2, h, s);
+  return subtract(outer, translate([t, t, t], inner));
+};
+
+export const ellipseFrame = (l: number, w: number, h: number, t: number, s = 128) => {
+  const outer = ellipseBody(l, w, h, s);
+  const inner = ellipseBody(l - t * 2, w - t * 2, h, s);
   return subtract(outer, translate([t, t, 0], inner));
 };

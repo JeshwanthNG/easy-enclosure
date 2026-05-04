@@ -1,9 +1,11 @@
 import { subtract, union } from '@jscad/modeling/src/operations/booleans';
 import { hull } from '@jscad/modeling/src/operations/hulls';
-import { mirrorX, rotateY, translate } from '@jscad/modeling/src/operations/transforms';
+import { mirrorX, rotateY, rotateZ, translate } from '@jscad/modeling/src/operations/transforms';
 import { cube, cuboid, cylinder } from '@jscad/modeling/src/primitives';
+import { degToRad } from '@jscad/modeling/src/utils';
 
 import { Params } from '../params';
+import { angularStartDeg } from './screws';
 
 const SCREWCLEARANCE = 2;
 const RIDGEWIDTH = 2;
@@ -48,19 +50,37 @@ export const flange = (screwDiameter: number) => {
 };
 
 export const flanges = (params: Params) => {
-  const { length, width, cornerRadius, wallMountScrewDiameter, wallMountCount } = params;
+  const { baseShape, length, width, cornerRadius, wallMountScrewDiameter, wallMountCount } =
+    params;
   const outerWidth = wallMountScrewDiameter + SCREWCLEARANCE * 2 + RIDGEWIDTH * 2;
-  const cornerSpacing = cornerRadius + outerWidth / 2;
   const z = outerWidth / 2;
 
-  const yPositions = wallMountCount === 2 ? [length / 2] : [cornerSpacing, length - cornerSpacing];
+  if (baseShape === 'rectangle') {
+    const cornerSpacing = cornerRadius + outerWidth / 2;
+    const yPositions =
+      wallMountCount === 2 ? [length / 2] : [cornerSpacing, length - cornerSpacing];
 
-  const left = yPositions.map((y) =>
-    translate([-RIDGEWIDTH, y, z], flange(wallMountScrewDiameter)),
-  );
-  const right = yPositions.map((y) =>
-    translate([width + RIDGEWIDTH, y, z], mirrorX(flange(wallMountScrewDiameter))),
-  );
+    const left = yPositions.map((y) =>
+      translate([-RIDGEWIDTH, y, z], flange(wallMountScrewDiameter)),
+    );
+    const right = yPositions.map((y) =>
+      translate([width + RIDGEWIDTH, y, z], mirrorX(flange(wallMountScrewDiameter))),
+    );
 
-  return union(...left, ...right);
+    return union(...left, ...right);
+  }
+
+  const a = width / 2;
+  const b = length / 2;
+  const start = angularStartDeg(wallMountCount);
+  const items = [];
+  for (let i = 0; i < wallMountCount; i++) {
+    const t = degToRad(start + (360 / wallMountCount) * i);
+    const x = width / 2 + a * Math.cos(t);
+    const y = length / 2 + b * Math.sin(t);
+    items.push(
+      translate([x, y, z], rotateZ(t - Math.PI, flange(wallMountScrewDiameter))),
+    );
+  }
+  return union(items);
 };

@@ -1,11 +1,14 @@
+import { subtract } from '@jscad/modeling/src/operations/booleans';
+import { translate } from '@jscad/modeling/src/operations/transforms';
+
 import { Params } from '../params';
 
-import { cloverFrame } from './utils';
-
-import { translate } from '@jscad/modeling/src/operations/transforms';
+import { cloverFrame, ellipseFrame } from './utils';
+import { screwPillars } from './screws';
 
 export const waterProofSealCutout = (params: Params) => {
   const {
+    baseShape,
     length,
     width,
     height,
@@ -17,23 +20,52 @@ export const waterProofSealCutout = (params: Params) => {
     cornerRadius,
     baseLidScrewDiameter,
     lidScrewDiameter,
+    lidScrewCount,
   } = params;
 
-  let diameterMax = Math.max(baseLidScrewDiameter, lidScrewDiameter);
-  return translate(
-    [wall, wall, height - (insertHeight + sealThickness)],
-    cloverFrame(
-      width - wall * 2,
-      length - wall * 2,
-      insertHeight + sealThickness + insertClearance,
-      insertThickness + insertClearance * 2,
-      diameterMax / 2 + cornerRadius / 4 + wall / 2,
-    ),
+  const diameterMax = Math.max(baseLidScrewDiameter, lidScrewDiameter);
+  const screwOffset = diameterMax / 2 + cornerRadius / 4 + wall / 2;
+  const grooveHeight = insertHeight + sealThickness + insertClearance;
+  const grooveThickness = insertThickness + insertClearance * 2;
+  const groove_z = height - (insertHeight + sealThickness);
+
+  if (baseShape === 'rectangle') {
+    return translate(
+      [wall, wall, groove_z],
+      cloverFrame(
+        width - wall * 2,
+        length - wall * 2,
+        grooveHeight,
+        grooveThickness,
+        screwOffset,
+      ),
+    );
+  }
+
+  const cutout = translate(
+    [wall, wall, groove_z],
+    ellipseFrame(width - wall * 2, length - wall * 2, grooveHeight, grooveThickness),
   );
+
+  if (params.lidScrews) {
+    const postExclusions = screwPillars(
+      baseShape,
+      width,
+      length,
+      grooveHeight,
+      screwOffset,
+      lidScrewCount,
+    );
+    if (postExclusions) {
+      return subtract(cutout, translate([0, 0, groove_z], postExclusions));
+    }
+  }
+  return cutout;
 };
 
 export const waterProofSeal = (params: Params) => {
   const {
+    baseShape,
     length,
     width,
     wall,
@@ -44,12 +76,23 @@ export const waterProofSeal = (params: Params) => {
     cornerRadius,
     lidScrewDiameter,
   } = params;
-  let diameterMax = Math.max(baseLidScrewDiameter, lidScrewDiameter);
-  return cloverFrame(
+  const diameterMax = Math.max(baseLidScrewDiameter, lidScrewDiameter);
+  const screwOffset = diameterMax / 2 + cornerRadius / 4 + wall / 2;
+
+  if (baseShape === 'rectangle') {
+    return cloverFrame(
+      width - wall * 2 - insertClearance * 2,
+      length - wall * 2 - insertClearance * 2,
+      sealThickness,
+      insertThickness,
+      screwOffset,
+    );
+  }
+
+  return ellipseFrame(
     width - wall * 2 - insertClearance * 2,
     length - wall * 2 - insertClearance * 2,
     sealThickness,
     insertThickness,
-    diameterMax / 2 + cornerRadius / 4 + wall / 2,
   );
 };

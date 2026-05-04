@@ -1,5 +1,9 @@
 import type { Surface } from './enclosure';
 
+export type BaseShape = 'rectangle' | 'circle' | 'oval';
+
+export type HolePositionMode = 'face' | 'angular';
+
 export type Hole = {
   shape: 'circle' | 'square' | 'rectangle' | 'rounded-rectangle';
   diameter: number;
@@ -9,6 +13,9 @@ export type Hole = {
   surface: Surface;
   x: number;
   y: number;
+  mode: HolePositionMode;
+  angle: number;
+  verticalOffset: number;
 };
 
 export type PCBMount = {
@@ -30,6 +37,7 @@ export type InternalWall = {
 };
 
 export type Params = {
+  baseShape: BaseShape;
   length: number;
   width: number;
   height: number;
@@ -51,11 +59,13 @@ export type Params = {
   wallMountCount: number;
   wallMountScrewDiameter: number;
   lidScrews: boolean;
+  lidScrewCount: number;
   lidScrewDiameter: number;
   baseLidScrewDiameter: number;
 };
 
 export const DEFAULT_PARAMS: Params = {
+  baseShape: 'rectangle',
   length: 80,
   width: 100,
   height: 30,
@@ -80,6 +90,9 @@ export const DEFAULT_PARAMS: Params = {
       cornerRadius: 3,
       x: 0,
       y: 0,
+      mode: 'face',
+      angle: 0,
+      verticalOffset: 0,
     },
     {
       shape: 'square',
@@ -90,6 +103,9 @@ export const DEFAULT_PARAMS: Params = {
       cornerRadius: 3,
       x: 0,
       y: 0,
+      mode: 'face',
+      angle: 0,
+      verticalOffset: 0,
     },
     {
       shape: 'rectangle',
@@ -100,6 +116,9 @@ export const DEFAULT_PARAMS: Params = {
       cornerRadius: 3,
       x: 0,
       y: 0,
+      mode: 'face',
+      angle: 0,
+      verticalOffset: 0,
     },
     {
       shape: 'square',
@@ -110,6 +129,9 @@ export const DEFAULT_PARAMS: Params = {
       cornerRadius: 3,
       x: 0,
       y: 0,
+      mode: 'face',
+      angle: 0,
+      verticalOffset: 0,
     },
     {
       shape: 'square',
@@ -120,6 +142,9 @@ export const DEFAULT_PARAMS: Params = {
       cornerRadius: 3,
       x: 0,
       y: 0,
+      mode: 'face',
+      angle: 0,
+      verticalOffset: 0,
     },
   ],
   pcbMounts: [
@@ -170,6 +195,7 @@ export const DEFAULT_PARAMS: Params = {
   wallMountCount: 4,
   wallMountScrewDiameter: 3.98,
   lidScrews: true,
+  lidScrewCount: 4,
   lidScrewDiameter: 2.98,
   baseLidScrewDiameter: 2.88,
 };

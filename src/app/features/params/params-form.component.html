@@ -10,25 +10,52 @@
     </p>
     <div class="accordian-body">
       <div class="input-group">
-        <label>Length</label>
-        <input
-          type="number"
-          min="1"
-          [value]="params().length"
-          (keydown.enter)="$any($event.target).blur()"
-          (blur)="setNumberParam('length', $any($event.target).value)"
-        />
+        <label>Base Shape</label>
+        <select
+          [value]="params().baseShape"
+          (change)="setBaseShape($any($event.target).value)"
+        >
+          @for (shape of baseShapes; track shape) {
+            <option [value]="shape">{{ baseShapeLabel(shape) }}</option>
+          }
+        </select>
       </div>
-      <div class="input-group">
-        <label>Width</label>
-        <input
-          type="number"
-          min="1"
-          [value]="params().width"
-          (keydown.enter)="$any($event.target).blur()"
-          (blur)="setNumberParam('width', $any($event.target).value)"
-        />
-      </div>
+      @if (params().baseShape === 'circle') {
+        <div class="input-group">
+          <label>Diameter</label>
+          <input
+            type="number"
+            min="1"
+            [value]="params().width"
+            (keydown.enter)="$any($event.target).blur()"
+            (blur)="
+              setNumberParam('width', $any($event.target).value);
+              setNumberParam('length', $any($event.target).value)
+            "
+          />
+        </div>
+      } @else {
+        <div class="input-group">
+          <label>{{ params().baseShape === 'oval' ? 'Length (Y axis)' : 'Length' }}</label>
+          <input
+            type="number"
+            min="1"
+            [value]="params().length"
+            (keydown.enter)="$any($event.target).blur()"
+            (blur)="setNumberParam('length', $any($event.target).value)"
+          />
+        </div>
+        <div class="input-group">
+          <label>{{ params().baseShape === 'oval' ? 'Width (X axis)' : 'Width' }}</label>
+          <input
+            type="number"
+            min="1"
+            [value]="params().width"
+            (keydown.enter)="$any($event.target).blur()"
+            (blur)="setNumberParam('width', $any($event.target).value)"
+          />
+        </div>
+      }
       <div class="input-group">
         <label>Height</label>
         <input
@@ -154,7 +181,7 @@
             <label>Surface</label>
             <select
               [value]="hole.surface"
-              (change)="updateHole($index, { surface: $any($event.target).value })"
+              (change)="setHoleSurface($index, $any($event.target).value)"
             >
               @for (surface of surfaces; track surface) {
                 <option [value]="surface">
@@ -164,25 +191,48 @@
             </select>
           </div>
 
-          <div class="input-group">
-            <label>X</label>
-            <input
-              type="number"
-              [value]="hole.x"
-              (keydown.enter)="$any($event.target).blur()"
-              (blur)="updateHole($index, { x: +$any($event.target).value })"
-            />
-          </div>
+          @if (hole.mode === 'angular') {
+            <div class="input-group">
+              <label>Angle (deg)</label>
+              <input
+                type="number"
+                step="1"
+                [value]="hole.angle"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updateHole($index, { angle: +$any($event.target).value })"
+              />
+            </div>
 
-          <div class="input-group">
-            <label>Y</label>
-            <input
-              type="number"
-              [value]="hole.y"
-              (keydown.enter)="$any($event.target).blur()"
-              (blur)="updateHole($index, { y: +$any($event.target).value })"
-            />
-          </div>
+            <div class="input-group">
+              <label>Vertical Offset</label>
+              <input
+                type="number"
+                [value]="hole.verticalOffset"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updateHole($index, { verticalOffset: +$any($event.target).value })"
+              />
+            </div>
+          } @else {
+            <div class="input-group">
+              <label>X</label>
+              <input
+                type="number"
+                [value]="hole.x"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updateHole($index, { x: +$any($event.target).value })"
+              />
+            </div>
+
+            <div class="input-group">
+              <label>Y</label>
+              <input
+                type="number"
+                [value]="hole.y"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updateHole($index, { y: +$any($event.target).value })"
+              />
+            </div>
+          }
 
           @if (
             hole.shape === 'rectangle' ||
@@ -450,6 +500,20 @@
       </div>
 
       @if (params().lidScrews) {
+        @if (isCurvedBase()) {
+          <div class="input-group">
+            <label>Screw Count</label>
+            <input
+              type="number"
+              min="2"
+              step="1"
+              [value]="params().lidScrewCount"
+              (keydown.enter)="$any($event.target).blur()"
+              (blur)="setNumberParam('lidScrewCount', $any($event.target).value)"
+            />
+          </div>
+        }
+
         <div class="input-group">
           <label>Lid Hole Diameter</label>
           <input
