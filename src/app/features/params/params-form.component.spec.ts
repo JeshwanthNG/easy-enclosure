@@ -58,6 +58,7 @@ describe('ParamsFormComponent', () => {
     component.addPcbMount();
     expect(state.params().pcbMounts.length).toBe(initialCount + 1);
     expect(state.params().pcbMounts[initialCount].surface).toBe('bottom');
+    expect(state.params().pcbMounts[initialCount].mountType).toBe('standoff');
 
     component.updatePcbMount(initialCount, { surface: 'left' });
     expect(state.params().pcbMounts[initialCount].surface).toBe('left');

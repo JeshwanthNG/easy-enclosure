@@ -4,6 +4,7 @@ import type { BaseShape, Hole, InternalWall, PCBMount, Params } from '../../core
 import { EnclosureStateService } from '../../core/state/enclosure-state.service';
 
 type Surface = 'top' | 'bottom' | 'left' | 'right' | 'front' | 'back';
+type PcbMountType = 'standoff' | 'oled-lcd-socket';
 
 @Component({
   selector: 'app-params-form',
@@ -18,6 +19,7 @@ export class ParamsFormComponent {
 
   readonly surfaces: Surface[] = ['front', 'right', 'back', 'left', 'top', 'bottom'];
   readonly baseShapes: BaseShape[] = ['rectangle', 'circle', 'oval'];
+  readonly pcbMountTypes: PcbMountType[] = ['standoff', 'oled-lcd-socket'];
 
   surfaceLabel(surface: Surface): string {
     if (surface === 'top') {
@@ -28,6 +30,10 @@ export class ParamsFormComponent {
 
   baseShapeLabel(shape: BaseShape): string {
     return shape[0].toUpperCase() + shape.slice(1);
+  }
+
+  pcbMountTypeLabel(type: PcbMountType): string {
+    return type === 'oled-lcd-socket' ? 'OLED/LCD Socket' : 'PCB Standoff';
   }
 
   isCurvedBase(): boolean {
@@ -125,12 +131,16 @@ export class ParamsFormComponent {
   addPcbMount(): void {
     const current = this.params();
     const next: PCBMount = {
+      mountType: 'standoff',
       surface: 'bottom',
       x: 0,
       y: 0,
       height: 5,
       outerDiameter: 6,
       screwDiameter: 2,
+      socketWidth: 26,
+      socketLength: 42,
+      socketWall: 1.6,
     };
     this.state.patchParams({ pcbMounts: [...current.pcbMounts, next] });
   }

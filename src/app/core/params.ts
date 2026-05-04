@@ -19,12 +19,16 @@ export type Hole = {
 };
 
 export type PCBMount = {
+  mountType?: 'standoff' | 'oled-lcd-socket';
   surface: Surface;
   x: number;
   y: number;
   height: number;
   outerDiameter: number;
   screwDiameter: number;
+  socketWidth?: number;
+  socketLength?: number;
+  socketWall?: number;
 };
 
 export type InternalWall = {
@@ -149,36 +153,52 @@ export const DEFAULT_PARAMS: Params = {
   ],
   pcbMounts: [
     {
+      mountType: 'standoff',
       surface: 'bottom',
       x: 30,
       y: 24,
       height: 5,
       outerDiameter: 6,
       screwDiameter: 2,
+      socketWidth: 26,
+      socketLength: 42,
+      socketWall: 1.6,
     },
     {
+      mountType: 'standoff',
       surface: 'bottom',
       x: -30,
       y: 24,
       height: 5,
       outerDiameter: 6,
       screwDiameter: 2,
+      socketWidth: 26,
+      socketLength: 42,
+      socketWall: 1.6,
     },
     {
+      mountType: 'standoff',
       surface: 'bottom',
       x: -30,
       y: -24,
       height: 5,
       outerDiameter: 6,
       screwDiameter: 2,
+      socketWidth: 26,
+      socketLength: 42,
+      socketWall: 1.6,
     },
     {
+      mountType: 'standoff',
       surface: 'bottom',
       x: 30,
       y: -24,
       height: 5,
       outerDiameter: 6,
       screwDiameter: 2,
+      socketWidth: 26,
+      socketLength: 42,
+      socketWall: 1.6,
     },
   ],
   internalWalls: [

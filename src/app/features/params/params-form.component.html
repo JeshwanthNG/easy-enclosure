@@ -308,6 +308,19 @@
           </p>
 
           <div class="input-group">
+            <label>Mount Type</label>
+            <select
+              [value]="mount.mountType || 'standoff'"
+              (change)="updatePcbMount($index, { mountType: $any($event.target).value })"
+            >
+              @for (type of pcbMountTypes; track type) {
+                <option [value]="type">
+                  {{ pcbMountTypeLabel(type) }}
+                </option>
+              }
+            </select>
+          </div>
+          <div class="input-group">
             <label>Surface</label>
             <select
               [value]="mount.surface || 'bottom'"
@@ -347,24 +360,61 @@
               (blur)="updatePcbMount($index, { height: +$any($event.target).value })"
             />
           </div>
-          <div class="input-group">
-            <label>Outer Diameter</label>
-            <input
-              type="number"
-              [value]="mount.outerDiameter"
-              (keydown.enter)="$any($event.target).blur()"
-              (blur)="updatePcbMount($index, { outerDiameter: +$any($event.target).value })"
-            />
-          </div>
-          <div class="input-group">
-            <label>Screw Diameter</label>
-            <input
-              type="number"
-              [value]="mount.screwDiameter"
-              (keydown.enter)="$any($event.target).blur()"
-              (blur)="updatePcbMount($index, { screwDiameter: +$any($event.target).value })"
-            />
-          </div>
+
+          @if ((mount.mountType || 'standoff') === 'standoff') {
+            <div class="input-group">
+              <label>Outer Diameter</label>
+              <input
+                type="number"
+                [value]="mount.outerDiameter"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updatePcbMount($index, { outerDiameter: +$any($event.target).value })"
+              />
+            </div>
+            <div class="input-group">
+              <label>Screw Diameter</label>
+              <input
+                type="number"
+                [value]="mount.screwDiameter"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updatePcbMount($index, { screwDiameter: +$any($event.target).value })"
+              />
+            </div>
+          } @else {
+            <div class="input-group">
+              <label>Socket Width</label>
+              <input
+                type="number"
+                min="1"
+                step="0.1"
+                [value]="mount.socketWidth ?? 26"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updatePcbMount($index, { socketWidth: +$any($event.target).value })"
+              />
+            </div>
+            <div class="input-group">
+              <label>Socket Length</label>
+              <input
+                type="number"
+                min="1"
+                step="0.1"
+                [value]="mount.socketLength ?? 42"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updatePcbMount($index, { socketLength: +$any($event.target).value })"
+              />
+            </div>
+            <div class="input-group">
+              <label>Socket Wall</label>
+              <input
+                type="number"
+                min="0.4"
+                step="0.1"
+                [value]="mount.socketWall ?? 1.6"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updatePcbMount($index, { socketWall: +$any($event.target).value })"
+              />
+            </div>
+          }
         </div>
       }
       <button type="button" class="add-btn" (click)="addPcbMount()">ADD NEW MOUNT</button>
