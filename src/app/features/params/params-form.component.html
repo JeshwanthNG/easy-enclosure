@@ -146,6 +146,7 @@
               <option value="circle">Circle</option>
               <option value="square">Square</option>
               <option value="rectangle">Rectangle</option>
+              <option value="rounded-rectangle">Rounded Rectangle</option>
             </select>
           </div>
 
@@ -183,7 +184,11 @@
             />
           </div>
 
-          @if (hole.shape === 'rectangle' || hole.shape === 'square') {
+          @if (
+            hole.shape === 'rectangle' ||
+            hole.shape === 'square' ||
+            hole.shape === 'rounded-rectangle'
+          ) {
             <div class="input-group">
               <label>Width</label>
               <input
@@ -195,7 +200,7 @@
             </div>
           }
 
-          @if (hole.shape === 'rectangle') {
+          @if (hole.shape === 'rectangle' || hole.shape === 'rounded-rectangle') {
             <div class="input-group">
               <label>Length</label>
               <input
@@ -203,6 +208,20 @@
                 [value]="hole.length"
                 (keydown.enter)="$any($event.target).blur()"
                 (blur)="updateHole($index, { length: +$any($event.target).value })"
+              />
+            </div>
+          }
+
+          @if (hole.shape === 'rounded-rectangle') {
+            <div class="input-group">
+              <label>Corner Radius</label>
+              <input
+                type="number"
+                min="0.1"
+                step="0.1"
+                [value]="hole.cornerRadius"
+                (keydown.enter)="$any($event.target).blur()"
+                (blur)="updateHole($index, { cornerRadius: +$any($event.target).value })"
               />
             </div>
           }

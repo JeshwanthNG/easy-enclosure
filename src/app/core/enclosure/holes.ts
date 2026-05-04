@@ -1,6 +1,7 @@
 import { rotate, translate } from '@jscad/modeling/src/operations/transforms';
 import { degToRad } from '@jscad/modeling/src/utils';
-import { cuboid, cylinder } from '@jscad/modeling/src/primitives';
+import { cuboid, cylinder, roundedRectangle } from '@jscad/modeling/src/primitives';
+import { extrudeLinear } from '@jscad/modeling/src/operations/extrusions';
 import { union } from '@jscad/modeling/src/operations/booleans';
 
 import { Params } from '../params';
@@ -111,6 +112,27 @@ export const holes = (
                 radius: hole.diameter / 2,
                 height: totalWallThickness,
               }),
+            ),
+          ),
+        );
+      } else if (hole.shape === 'rounded-rectangle') {
+        const maxRadius = Math.min(hole.width, hole.length) / 2;
+        const radius = Math.max(0.01, Math.min(hole.cornerRadius, maxRadius - 0.001));
+        result.push(
+          translate(
+            [x, y, z],
+            rotate(
+              rot,
+              translate(
+                [0, 0, -totalWallThickness / 2],
+                extrudeLinear(
+                  { height: totalWallThickness },
+                  roundedRectangle({
+                    size: [hole.width, hole.length],
+                    roundRadius: radius,
+                  }),
+                ),
+              ),
             ),
           ),
         );

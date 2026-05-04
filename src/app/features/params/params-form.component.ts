@@ -60,6 +60,7 @@ export class ParamsFormComponent {
       diameter: 12.5,
       width: 10,
       length: 10,
+      cornerRadius: 3,
       y: current.width / 2,
       x: 6,
     };

@@ -1,10 +1,11 @@
 import type { Surface } from './enclosure';
 
 export type Hole = {
-  shape: 'circle' | 'square' | 'rectangle';
+  shape: 'circle' | 'square' | 'rectangle' | 'rounded-rectangle';
   diameter: number;
   width: number;
   length: number;
+  cornerRadius: number;
   surface: Surface;
   x: number;
   y: number;
@@ -76,6 +77,7 @@ export const DEFAULT_PARAMS: Params = {
       diameter: 12.5,
       width: 10,
       length: 10,
+      cornerRadius: 3,
       x: 0,
       y: 0,
     },
@@ -85,6 +87,7 @@ export const DEFAULT_PARAMS: Params = {
       diameter: 10,
       width: 12,
       length: 10,
+      cornerRadius: 3,
       x: 0,
       y: 0,
     },
@@ -94,6 +97,7 @@ export const DEFAULT_PARAMS: Params = {
       width: 40,
       length: 6,
       diameter: 10,
+      cornerRadius: 3,
       x: 0,
       y: 0,
     },
@@ -103,6 +107,7 @@ export const DEFAULT_PARAMS: Params = {
       width: 12.5,
       length: 10,
       diameter: 10,
+      cornerRadius: 3,
       x: 0,
       y: 0,
     },
@@ -112,6 +117,7 @@ export const DEFAULT_PARAMS: Params = {
       width: 30,
       length: 10,
       diameter: 10,
+      cornerRadius: 3,
       x: 0,
       y: 0,
     },
