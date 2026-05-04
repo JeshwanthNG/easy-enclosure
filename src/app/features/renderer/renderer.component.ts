@@ -69,6 +69,10 @@ const baseDeps = [
   'wallMountScrewDiameter',
   'wallMountCount',
   'insertClearance',
+  'dinRailMount',
+  'dinRailMountLength',
+  'dinRailMountOrientation',
+  'dinRailMountStyle',
 ];
 const sealDeps = [
   'baseShape',

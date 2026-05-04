@@ -91,6 +91,10 @@ export class ParamsFormComponent {
     this.state.updateParam(key, checked as Params[K]);
   }
 
+  setStringParam<K extends keyof Params>(key: K, value: string): void {
+    this.state.updateParam(key, value as Params[K]);
+  }
+
   addHole(): void {
     const current = this.params();
     const useAngular = current.baseShape !== 'rectangle';

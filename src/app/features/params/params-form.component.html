@@ -582,4 +582,66 @@
       }
     </div>
   </div>
+
+  <div class="accordian" [class.active]="activeTab() === 9">
+    <p class="accordian-header" (click)="setActiveTab(9)">
+      DIN Rail Mount
+      <span class="accordian-icon">{{ activeTab() === 9 ? '-' : '+' }}</span>
+    </p>
+    <div class="accordian-body">
+      <div class="input-group">
+        <label>DIN Rail Mount</label>
+        <input
+          type="checkbox"
+          [checked]="params().dinRailMount"
+          (change)="setBooleanParam('dinRailMount', $any($event.target).checked)"
+        />
+      </div>
+
+      @if (params().dinRailMount) {
+        <div class="input-group">
+          <label>Mount Style</label>
+          <select
+            [value]="params().dinRailMountStyle"
+            (change)="setStringParam('dinRailMountStyle', $any($event.target).value)"
+          >
+            <option value="slide">Slide-on</option>
+            <option value="snap">Snap-on</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>Mount Length</label>
+          <input
+            type="number"
+            min="10"
+            step="1"
+            [value]="params().dinRailMountLength"
+            (keydown.enter)="$any($event.target).blur()"
+            (blur)="setNumberParam('dinRailMountLength', $any($event.target).value)"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Rail Direction</label>
+          <select
+            [value]="params().dinRailMountOrientation"
+            (change)="
+              setStringParam('dinRailMountOrientation', $any($event.target).value)
+            "
+          >
+            <option value="x">Along Width (X)</option>
+            <option value="y">Along Length (Y)</option>
+          </select>
+        </div>
+
+        @if (params().dinRailMountStyle === 'snap') {
+          <p style="font-size: 0.85em; opacity: 0.75; margin-top: 0.5em">
+            Snap-on relies on side-wall flex. Print in PETG or ABS — PLA can crack on
+            the first install.
+          </p>
+        }
+      }
+    </div>
+  </div>
 </form>

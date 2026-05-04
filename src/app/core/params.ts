@@ -62,6 +62,10 @@ export type Params = {
   lidScrewCount: number;
   lidScrewDiameter: number;
   baseLidScrewDiameter: number;
+  dinRailMount: boolean;
+  dinRailMountLength: number;
+  dinRailMountOrientation: 'x' | 'y';
+  dinRailMountStyle: 'slide' | 'snap';
 };
 
 export const DEFAULT_PARAMS: Params = {
@@ -198,6 +202,10 @@ export const DEFAULT_PARAMS: Params = {
   lidScrewCount: 4,
   lidScrewDiameter: 2.98,
   baseLidScrewDiameter: 2.88,
+  dinRailMount: false,
+  dinRailMountLength: 25,
+  dinRailMountOrientation: 'x',
+  dinRailMountStyle: 'slide',
 };
 
 export const cloneParams = (params: Params): Params => {
